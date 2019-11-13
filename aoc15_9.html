@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script>
+		"use strict";  
+    
+    function calc() {
+      document.getElementById("result").innerHTML = getResult();      
+    }     
+
+    function getResult() { 
+      let cities = getCities();
+      let combinations = makeCombinations(cities);      
+      let shortestRout = 1000;
+      let longestRout = 0;
+
+      for (let i = 0; i < combinations.length; ++i) {
+        let rout = 0;
+
+        for (let j = 0; j < combinations[i].length - 1; ++j) {               
+          rout += combinations[i][j][combinations[i][j + 1]["name"]];
+        }
+        
+        shortestRout = (rout < shortestRout) ? rout : shortestRout;
+        longestRout = (rout > longestRout) ? rout : longestRout;
+      }
+
+      return shortestRout + ", " + longestRout;
+    }   
+
+    function getCities() {
+      let cities = [];
+
+      input.split("\n").forEach(l => {
+        let line = l.split(" ");
+        if (!cities.includes(line[0])) {
+          cities.push(line[0]);
+        }
+
+        if (!cities.includes(line[2])) {
+          cities.push(line[2]);
+        }
+      });
+      
+      for (let i = 0; i < cities.length; ++i) {
+        cities[i] = {name: cities[i]};
+      }
+
+      for (let i = 0; i < cities.length; ++i) {
+        getDistances(cities, i);
+      }
+
+      return cities;
+    }
+
+    function getDistances(cities, i) {
+      input.split("\n").forEach(l => {
+        let line = l.split(" ");
+
+        if (cities[i]["name"] == line[0]) {
+          if (cities[i][line[2]] == undefined) {
+            cities[i][line[2]] = +line[4];
+          }
+
+          for (let j = 0; j < cities.length; ++j) {
+              if (line[2] == cities[j]["name"]) {
+                cities[j][line[0]] = +line[4];
+              }
+            }          
+        }
+      });
+    }
+
+    function makeCombinations(cities) {
+      let curr = [[cities[0]]];
+
+      for(let i = 1; i < cities.length; ++i) {
+        let next = cities[i];
+        let prev = curr;
+        curr = [];
+
+        prev.forEach(elem => {
+          curr = curr.concat(make(elem, next));
+        });
+      }
+
+      return curr;
+    }
+
+    function make(elem, next) {
+      let res = [];
+
+      for(let i = elem.length; i >= 0; --i) {
+        res.push([].concat(elem.slice(0, i), [next], elem.slice(i)));
+      }
+
+      return res;
+    }
+ 
+let input = `Tristram to AlphaCentauri = 34
+Tristram to Snowdin = 100
+Tristram to Tambi = 63
+Tristram to Faerun = 108
+Tristram to Norrath = 111
+Tristram to Straylight = 89
+Tristram to Arbre = 132
+AlphaCentauri to Snowdin = 4
+AlphaCentauri to Tambi = 79
+AlphaCentauri to Faerun = 44
+AlphaCentauri to Norrath = 147
+AlphaCentauri to Straylight = 133
+AlphaCentauri to Arbre = 74
+Snowdin to Tambi = 105
+Snowdin to Faerun = 95
+Snowdin to Norrath = 48
+Snowdin to Straylight = 88
+Snowdin to Arbre = 7
+Tambi to Faerun = 68
+Tambi to Norrath = 134
+Tambi to Straylight = 107
+Tambi to Arbre = 40
+Faerun to Norrath = 11
+Faerun to Straylight = 66
+Faerun to Arbre = 144
+Norrath to Straylight = 115
+Norrath to Arbre = 135
+Straylight to Arbre = 127`;
+
+</script>
+</head>
+<body onload="calc()">  
+  <div id="result"></div>  
+</body>
+</html>
