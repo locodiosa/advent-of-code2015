@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script>
+		"use strict";  
+    
+    function calc() {
+      document.getElementById("result").innerHTML = getResult();      
+    }     
+
+    function getResult() { 
+      let result = 0;
+      let current = input;     
+
+      for (let times = 0; times < 50; ++times) {
+        let prevD = null;
+        let n = 0;
+        let next = "";
+
+        current.split("").forEach(currD => {
+          if (currD != prevD) {
+            if (prevD != null) {
+              next += n;
+              next += prevD;
+            }
+
+            prevD = currD;
+            n = 0;
+          }
+
+          ++n;
+        });
+
+        current = next + n + prevD;
+
+        if (times == 39) {
+          result = current.length;
+        }        
+      }
+
+      return result + ", " + current.length;     
+    } 
+
+let input = "1321131112";
+
+</script>
+</head>
+<body onload="calc()">  
+  <div id="result"></div>  
+</body>
+</html>
