@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+	"use strict";
+
+	function calc() {
+		document.getElementById("result").innerHTML = getResult();
+	}
+
+	function getResult() {
+		const password = input.split("");
+		const newPasswords = [];
+
+		for (let i = password.length - 1; newPasswords.length < 2; i = password.length - 1) {
+			password[i] = nextLetter(password[i]);
+
+			while (password[i] == "a") {
+				--i;
+				password[i] = nextLetter(password[i]);
+			}
+
+			if (checkPass(password)) {
+				newPasswords.push(password.join(""));
+			}
+		}
+
+		return newPasswords;
+	}
+
+	function nextLetter(letter) {
+		if (letter == "z") {
+			return "a";
+		} else {
+			return String.fromCharCode(letter.charCodeAt(0) + 1);
+		}
+	}
+
+	function checkPass(password) {
+		if (password.join("").match(/[iol]/gm) == null) {
+			for (let i = 0; i < password.length - 2; ++i) {
+				if ((password[i + 1].charCodeAt(0) - password[i].charCodeAt(0) == 1) &&
+					(password[i + 2].charCodeAt(0) - password[i + 1].charCodeAt(0) == 1)) { 
+
+					const doubleLetters = new Set();
+					const allDoubleLetters = password.join("").match(/([a-z])\1/gm);
+
+					if (allDoubleLetters != null) {
+						allDoubleLetters.forEach(letter => doubleLetters.add(letter));
+					}
+
+					if (doubleLetters.size >= 2) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+let test = "abcdefgh";
+
+let input = "vzbxkghb";
+
+</script>
+</head>
+<body onload="calc()">
+<div id="result"></div>
+</body>
+</html>
