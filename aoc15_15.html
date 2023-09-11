@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+	"use strict";
+
+	function calc() {
+		document.getElementById("result").innerHTML = getResult();
+	}
+
+	function getResult() {
+		const ingredients = input.split("\n").map(line => line.match(/-?\d+/gm).map(Number));
+
+		const part1 = Math.max(...fullSearch(ingredients, 1).filter(e => e > 0));
+		const part2 = Math.max(...fullSearch(ingredients, 2).filter(e => e > 0));
+
+		return part1 + ", " + part2;
+	}
+
+	function fullSearch(ingredients, part) {
+		const spoons = [0, 0, 0, 0];
+		const totalScore = [];
+
+		for (let i0 = 0; i0 <= 100; ++i0) {
+			spoons[0] = i0;
+
+			for (let i1 = 0; i1 <= 100; ++i1) {
+				spoons[1] = i1;
+
+				for (let i2 = 0; i2 <= 100; ++i2) {
+					spoons[2] = i2;
+
+					for (let i3 = 0; i3 <= 100; ++i3) {
+						spoons[3] = i3;
+
+						if (i0 + i1 + i2 + i3 == 100) {
+							totalScore.push(countScore(ingredients, spoons, part));
+						}
+					}
+				}
+			}
+		}
+
+		return totalScore;
+	}
+
+	function countScore(ingredients, spoons, part) {
+		const score = [0, 0, 0, 0];
+		let calories = 0;
+
+		for (let i = 0; i < 5; ++i) {
+			for (let j = 0; j < ingredients.length; ++j) {
+				if (i == 4) {
+					calories += ingredients[j][i] * spoons[j];
+				} else {
+					score[i] += (ingredients[j][i] * spoons[j]);
+				}
+			}
+
+			if (score[i] < 0) {
+				score[i] = 0;
+			}
+		}
+
+		if (calories == 500 || part == 1) {
+			return score.reduce(((s, e) => s * e), 1);
+		} else {
+			return 0;
+		}
+	}
+
+const test = `Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
+Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3`;
+
+const input = `Sugar: capacity 3, durability 0, flavor 0, texture -3, calories 2
+Sprinkles: capacity -3, durability 3, flavor 0, texture 0, calories 9
+Candy: capacity -1, durability 0, flavor 4, texture 0, calories 1
+Chocolate: capacity 0, durability 0, flavor -2, texture 2, calories 8`;
+
+</script>
+</head>
+<body onload="calc()">
+<div id="result"></div>
+</body>
+</html>
