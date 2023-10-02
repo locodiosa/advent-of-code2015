@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+	"use strict";
+
+	function calc() {
+		document.getElementById("result").innerHTML = getResult();
+	}
+
+	function getResult() {
+		const data = input.split("\n\n");
+
+		const initMolecule = data[1];
+		const allReplacements = data[0].split("\n").map(line => line.split(" => "));
+
+		const replacements = {};
+
+		allReplacements.forEach(arr => {
+			if (replacements[arr[0]] == undefined) {
+				replacements[arr[0]] = [arr[1]];
+			} else {
+				replacements[arr[0]].push(arr[1]);
+			}
+		});
+
+		const part1 = makeMolecules(initMolecule, replacements);
+
+		const part2 = formulaFromReddit(initMolecule, replacements);//https://www.reddit.com/r/adventofcode/comments/3xflz8/comment/cy4etju/?utm_source=share&utm_medium=web2x&context=3
+
+		return part1 + ", " + part2;
+	}
+
+	function makeMolecules(initMolecule, replacements) {
+		const allMolecules = new Set();
+
+		Object.keys(replacements).forEach(key => {
+			replacements[key].forEach(r => {
+				let i = initMolecule.indexOf(key);
+				const indices = [];
+
+				while (i != -1) {
+					indices.push(i);
+					i = initMolecule.indexOf(key, i + 1);
+				}
+
+				indices.forEach(i => {
+					const newMolecule = (initMolecule.length == key.length) ? initMolecule.replace(key, r) : (initMolecule.slice(0, i) + initMolecule.slice(i).replace(key, r));
+					allMolecules.add(newMolecule);
+				});
+			});
+		});
+
+		return allMolecules.size;
+	}
+
+	function formulaFromReddit(initMolecule, replacements) {
+		const nY = countStr(initMolecule, "Y");
+		let nKeys = 0;
+
+		Object.keys(replacements).forEach(key => {
+			nKeys += countStr(initMolecule, key);
+		});
+
+		return (nKeys + nY) - (2 * nY) - 1;
+	}
+
+	function countStr(initMolecule, key) {
+		let i = initMolecule.indexOf(key);
+		let n = 0;
+
+		while (i != -1) {
+			++n;
+			i = initMolecule.indexOf(key, i + 1);
+		}
+
+		return n;
+	}
+
+const test = `e => H
+e => O
+H => HO
+H => OH
+O => HH
+
+HOH`;
+
+const input = `Al => ThF
+Al => ThRnFAr
+B => BCa
+B => TiB
+B => TiRnFAr
+Ca => CaCa
+Ca => PB
+Ca => PRnFAr
+Ca => SiRnFYFAr
+Ca => SiRnMgAr
+Ca => SiTh
+F => CaF
+F => PMg
+F => SiAl
+H => CRnAlAr
+H => CRnFYFYFAr
+H => CRnFYMgAr
+H => CRnMgYFAr
+H => HCa
+H => NRnFYFAr
+H => NRnMgAr
+H => NTh
+H => OB
+H => ORnFAr
+Mg => BF
+Mg => TiMg
+N => CRnFAr
+N => HSi
+O => CRnFYFAr
+O => CRnMgAr
+O => HP
+O => NRnFAr
+O => OTi
+P => CaP
+P => PTi
+P => SiRnFAr
+Si => CaSi
+Th => ThCa
+Ti => BP
+Ti => TiTi
+e => HF
+e => NAl
+e => OMg
+
+ORnPBPMgArCaCaCaSiThCaCaSiThCaCaPBSiRnFArRnFArCaCaSiThCaCaSiThCaCaCaCaCaCaSiRnFYFArSiRnMgArCaSiRnPTiTiBFYPBFArSiRnCaSiRnTiRnFArSiAlArPTiBPTiRnCaSiAlArCaPTiTiBPMgYFArPTiRnFArSiRnCaCaFArRnCaFArCaSiRnSiRnMgArFYCaSiRnMgArCaCaSiThPRnFArPBCaSiRnMgArCaCaSiThCaSiRnTiMgArFArSiThSiThCaCaSiRnMgArCaCaSiRnFArTiBPTiRnCaSiAlArCaPTiRnFArPBPBCaCaSiThCaPBSiThPRnFArSiThCaSiThCaSiThCaPTiBSiRnFYFArCaCaPRnFArPBCaCaPBSiRnTiRnFArCaPRnFArSiRnCaCaCaSiThCaRnCaFArYCaSiRnFArBCaCaCaSiThFArPBFArCaSiRnFArRnCaCaCaFArSiRnFArTiRnPMgArF`;
+
+</script>
+</head>
+<body onload="calc()">
+<div id="result"></div>
+</body>
+</html>
