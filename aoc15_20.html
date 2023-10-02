@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+	"use strict";
+
+	function calc() {
+		document.getElementById("result").innerHTML = getResult();
+	}
+
+	function getResult() {
+		let presents = 0;
+
+		let part1 = null;
+
+		for (let i = 660000; presents < input; ++i) {
+			presents = 0;
+
+			for (let j = 1; j <= i; ++j) {
+				if (i % j == 0) {
+					presents += (j * 10);
+				}
+			}
+
+			if (presents >= input) {
+				part1 = i;
+			}
+		}
+
+		let part2 = null;
+		presents = 0;
+
+		for (let i = 700000; presents < input; ++i) {
+			presents = 0;
+
+			for (let j = 14000; j <= i; ++j) {
+				if (i / j <= 50) {
+					if (i % j == 0) {
+						presents += (j * 11);
+					}
+				}
+			}
+
+			if (presents >= input) {
+				part2 = i;
+			}
+		}
+
+		return part1 + ", " + part2;
+	}
+
+const input = 29000000;
+
+</script>
+</head>
+<body onload="calc()">
+<div id="result"></div>
+</body>
+</html>
