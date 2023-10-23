@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script>
+	"use strict";
+
+	function calc() {
+		document.getElementById("result").innerHTML = getResult();
+	}
+
+	function getResult() {
+		const data = input.split("\n").map(line => +line.match(/\d+/g));
+
+		const players = [{points: 100, damage: 0, armor: 0}, 
+						 {points: data[0], damage: data[1], armor: data[2]}];
+
+		let items = shop.split("\n\n").map(e => e.split("\n"));
+
+		const [weapons, armor, rings] = items.map(type => {
+			type.shift();
+
+			return type.map(line => line.match(/\s\d+/g).map(Number));
+		});
+
+		const part1 = fight(players, weapons, armor, rings, Infinity, 1);
+
+		const part2 = fight(players, weapons, armor, rings, 0, 2);
+
+		return part1 + ", " + part2;
+	}
+
+	function fight(players, weapons, armor, rings, res, part) {
+		const startPoints = [players[0].points, players[1].points];
+		let gold = 0;
+
+		weapons.forEach(w => {
+			players[0].damage += w[1];
+			gold += w[0];
+
+			armor.forEach(a => {
+				players[0].armor += a[2];
+				gold += a[0];
+
+				rings.forEach((r, k) => {
+					players[0].damage += r[1];
+					players[0].armor += r[2];
+					gold += r[0];
+
+					rings.forEach((rr, m) => {
+						if (k != m) {
+							players[0].damage += rr[1];
+							players[0].armor += rr[2];
+							gold += rr[0];
+						}
+
+						while(players[0].points > 0 && players[1].points > 0) {
+							for (let i = 0; i < players.length && players[0].points > 0 && players[1].points > 0; ++i) {
+								let j = (i == 0) ? 1 : 0;
+
+								players[j].points -= Math.max(players[i].damage - players[j].armor, 1);
+
+								if (part == 1 && j == 1) {
+									if (players[1].points <= 0) {
+										res = Math.min(res, gold);
+									}
+								} else if (part == 2 && j == 0) {
+									if (players[0].points <= 0) {
+										res = Math.max(res, gold);
+									}
+								}
+							}
+						}
+
+						[players[0].points, players[1].points] = startPoints;
+
+						if (k != m) {
+							players[0].damage -= rr[1];
+							players[0].armor -= rr[2];
+							gold -= rr[0];
+						}
+					});
+
+					players[0].damage -= r[1];
+					players[0].armor -= r[2];
+					gold -= r[0];
+				});
+
+				players[0].armor -= a[2];
+				gold -= a[0];
+			});
+
+			players[0].damage -= w[1];
+			gold -= w[0];
+		});
+
+		return res;
+	}
+
+const shop = `Weapons:    Cost  Damage  Armor
+Dagger        8     4       0
+Shortsword   10     5       0
+Warhammer    25     6       0
+Longsword    40     7       0
+Greataxe     74     8       0
+
+Armor:      Cost  Damage  Armor
+Null          0     0       0
+Leather      13     0       1
+Chainmail    31     0       2
+Splintmail   53     0       3
+Bandedmail   75     0       4
+Platemail   102     0       5
+
+Rings:      Cost  Damage  Armor
+Null          0     0       0
+Damage +1    25     1       0
+Damage +2    50     2       0
+Damage +3   100     3       0
+Defense +1   20     0       1
+Defense +2   40     0       2
+Defense +3   80     0       3`;
+
+const input = `Hit Points: 100
+Damage: 8
+Armor: 2`;
+
+</script>
+</head>
+<body onload="calc()">
+<div id="result"></div>
+</body>
+</html>
